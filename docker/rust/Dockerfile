@@ -1,4 +1,4 @@
-FROM rust:latest
+FROM rust:1.69-buster
 
 RUN useradd -m -u 1000 rust -s /bin/bash
 RUN rustup component add rustfmt
