@@ -1,15 +1,12 @@
-use actix_web::{get, Responder, HttpResponse, HttpServer, App};
+use actix_web::{HttpServer, App};
 
-#[get("/todos")]
-async fn get_todos() -> impl Responder {
-    HttpResponse::Ok().body("/todos")
-}
+mod types;
+mod configure;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new( || {
-        App::new()
-            .service(get_todos)
+        App::new().configure(configure::config)
     })
     .bind(("localhost", 8080))?
     .run()
