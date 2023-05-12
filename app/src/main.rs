@@ -1,12 +1,26 @@
-use actix_web::{HttpServer, App};
+use actix_web::{HttpServer, App, web};
+use sqlx::postgres::{PgPool, PgPoolOptions};
+use types::AppState;
 
 mod types;
 mod configure;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new( || {
-        App::new().configure(configure::config)
+
+    let env = configure::env()?;
+    let pool = match PgPoolOptions::new()
+        .max_connections(50)
+        .connect(&env.database_url)
+        .await {
+            Ok(pool) => pool,
+            Err(e) => std::process::exit(1)
+    };    
+
+    HttpServer::new( move || {
+        App::new()
+            .app_data(web::Data::new(AppState { db: pool.clone() }))
+            .configure(configure::config)
     })
     .bind(("localhost", 8080))?
     .run()
