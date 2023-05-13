@@ -1,8 +1,11 @@
 use actix_web::{
-    delete, get, patch, post,
+    delete, get,
+    http::StatusCode,
+    patch, post,
     web::{self, ServiceConfig},
     HttpResponse, Responder,
 };
+use serde_json::json;
 
 use crate::domain::{repository::TodoRepository, todo::Todo, AppState};
 
@@ -42,8 +45,10 @@ async fn get_todo(id: web::Path<u32>) -> impl Responder {
 #[post("/todo")]
 async fn post_todo(data: web::Data<AppState>, todo: web::Json<Todo>) -> impl Responder {
     let repository = TodoRepository::new(&data.db);
-    let id = repository.create(&todo.title, &todo.body).await.unwrap();
-    HttpResponse::Ok().body(format!("{}", id))
+    match repository.create(&todo.title, &todo.body).await {
+        Ok(id) => HttpResponse::Ok().json(json!({ "id": id })),
+        Err(e) => HttpResponse::InternalServerError().json(json!({ "message": e.to_string() })),
+    }
 }
 
 /// Patch /todo
