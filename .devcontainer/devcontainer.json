@@ -15,12 +15,12 @@
 				"rust-lang.rust-analyzer",
 				"vadimcn.vscode-lldb",
 				"mhutchie.git-graph"
-			]
-		},
-		"settings": {
-			"[rust]": {
-				"editor.defaultFormatter": "rust-lang.rust-analyzer",
-				"editor.formatOnSave": true
+			],
+			"settings": {
+				"[rust]": {
+					"editor.defaultFormatter": "rust-lang.rust-analyzer",
+					"editor.formatOnSave": true
+				}
 			}
 		}
 	},

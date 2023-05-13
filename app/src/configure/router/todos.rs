@@ -1,12 +1,27 @@
 use actix_web::{get, post, patch, delete, web::{self, ServiceConfig}, Responder, HttpResponse};
 
-use crate::types::Todo;
+use crate::{domain::{AppState, todo::Todo}};
 
 /// Get /todos
 /// todo一覧を返す 
 #[get("/todos")]
-async fn get_todos() -> impl Responder {
-    HttpResponse::Ok().body("/todos")
+async fn get_todos(data: web::Data<AppState>) -> impl Responder {
+
+    #[derive(sqlx::FromRow)]
+    struct Date{
+        pub hoge: String
+    }
+
+    match sqlx::query_as::<_, Date>("SELECT 'hoge' as hoge").fetch_one(&data.db).await {
+        Ok(row) => {
+            return HttpResponse::Ok().body(format!("/done/{}", row.hoge));
+        },
+        Err(e) => {
+            println!("{}", e);
+        }
+    }
+
+    HttpResponse::Ok().body("/done")
 }
 
 /// Get /todo/{id}

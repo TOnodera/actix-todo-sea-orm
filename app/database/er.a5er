@@ -40,11 +40,11 @@ ShowCommonAttributes=0
 BugFixEntityWidth=1
 
 [Entity]
-PName=NEW_ENTITY1
-LName=
+PName=todos
+LName=todoテーブル
 Comment=
 TableOption=
-Page=Main
+Page=MAIN
 Left=400
 Top=350
 Field="ID","id","serial","NOT NULL",0,"","ID",$FFFFFFFF,""
@@ -55,6 +55,6 @@ Field="更新日時","updated_at","timestamp with time zone","NOT NULL",,"","更
 EffectMode=None
 Color=$000000
 BkColor=$FFFFFF
-ModifiedDateTime=20230512223759
-Position="Main",400,350,241,174
+ModifiedDateTime=20230512224210
+Position="MAIN",400,350,241,174
 ZOrder=1

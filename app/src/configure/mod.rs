@@ -1,6 +1,6 @@
 use actix_web::web::ServiceConfig;
 
-use crate::types::Env;
+use crate::domain::Env;
 
 mod router;
 

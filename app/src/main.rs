@@ -1,13 +1,14 @@
 use actix_web::{HttpServer, App, web};
-use sqlx::postgres::{PgPool, PgPoolOptions};
-use types::AppState;
+use domain::AppState;
+use sqlx::postgres::{PgPoolOptions};
 
 mod types;
 mod configure;
+mod domain;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
+    
     let env = configure::env()?;
     let pool = match PgPoolOptions::new()
         .max_connections(50)
