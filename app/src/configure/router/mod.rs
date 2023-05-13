@@ -1,4 +1,4 @@
-use actix_web::{Resource, web::ServiceConfig};
+use actix_web::web::ServiceConfig;
 
 mod todos;
 

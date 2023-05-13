@@ -1,3 +1,4 @@
+-- Add up migration script here
 -- Add migration script here
 -- Project Name : rust-todo
 -- Date/Time    : 2023/05/12 22:42:20
@@ -18,9 +19,9 @@
 create table todos (
   id serial not null
   , title varchar(256) not null
-  , body text not null
-  , registed_at timestamp with time zone not null
-  , updated_at timestamp with time zone not null
+  , body text not null default ''
+  , registed_at timestamp with time zone not null default CURRENT_TIMESTAMP
+  , updated_at timestamp with time zone not null default CURRENT_TIMESTAMP
   , constraint todos_PKC primary key (id)
 ) ;
 

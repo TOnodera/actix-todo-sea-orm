@@ -1,9 +1,9 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 // Todoのデータ構造
 #[derive(Serialize, Deserialize)]
 pub struct Todo {
-    id: Option<u32>,
-    name: String,
-    body: String
+    pub id: Option<u32>,
+    pub title: String,
+    pub body: String,
 }

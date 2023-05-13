@@ -1,21 +1,27 @@
-use actix_web::{get, post, patch, delete, web::{self, ServiceConfig}, Responder, HttpResponse};
+use actix_web::{
+    delete, get, patch, post,
+    web::{self, ServiceConfig},
+    HttpResponse, Responder,
+};
 
-use crate::{domain::{AppState, todo::Todo}};
+use crate::domain::{repository::TodoRepository, todo::Todo, AppState};
 
 /// Get /todos
-/// todo一覧を返す 
+/// todo一覧を返す
 #[get("/todos")]
 async fn get_todos(data: web::Data<AppState>) -> impl Responder {
-
     #[derive(sqlx::FromRow)]
-    struct Date{
-        pub hoge: String
+    struct Date {
+        pub hoge: String,
     }
 
-    match sqlx::query_as::<_, Date>("SELECT 'hoge' as hoge").fetch_one(&data.db).await {
+    match sqlx::query_as::<_, Date>("SELECT 'hoge' as hoge")
+        .fetch_one(&data.db)
+        .await
+    {
         Ok(row) => {
             return HttpResponse::Ok().body(format!("/done/{}", row.hoge));
-        },
+        }
         Err(e) => {
             println!("{}", e);
         }
@@ -34,8 +40,10 @@ async fn get_todo(id: web::Path<u32>) -> impl Responder {
 /// Post /todo
 /// todoを登録する
 #[post("/todo")]
-async fn post_todo(todo: web::Json<Todo>) -> impl Responder {
-    HttpResponse::Ok().json(todo)
+async fn post_todo(data: web::Data<AppState>, todo: web::Json<Todo>) -> impl Responder {
+    let repository = TodoRepository::new(&data.db);
+    let id = repository.create(&todo.title, &todo.body).await.unwrap();
+    HttpResponse::Ok().body(format!("{}", id))
 }
 
 /// Patch /todo
@@ -54,8 +62,7 @@ async fn delete_todo(id: web::Path<u32>) -> impl Responder {
 
 /// /todos,/todoのルートを設定
 pub fn todos_route(cfg: &mut ServiceConfig) {
-    cfg
-        .service(get_todos)
+    cfg.service(get_todos)
         .service(get_todo)
         .service(post_todo)
         .service(patch_todo)
