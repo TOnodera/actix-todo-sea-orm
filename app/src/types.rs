@@ -12,6 +12,8 @@ pub enum ApplicationError {
     DomainError(String),
     #[error("データベースエラー: {0}")]
     DatabaseError(String),
+    #[error("IOエラー: {0}")]
+    IoError(String),
     #[error("原因不明なエラー: {0}")]
     UnknownError(String),
 }

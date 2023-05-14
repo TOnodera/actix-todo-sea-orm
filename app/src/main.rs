@@ -4,6 +4,7 @@ use sqlx::postgres::PgPoolOptions;
 
 mod configure;
 mod domain;
+mod logger;
 mod types;
 
 #[actix_web::main]
@@ -18,6 +19,7 @@ async fn main() -> std::io::Result<()> {
         Err(e) => std::process::exit(1),
     };
 
+    logger::log().info("アプリケーションを起動しました。");
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(AppState { db: pool.clone() }))
