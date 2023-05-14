@@ -1,7 +1,7 @@
 use actix_web::web::ServiceConfig;
 
-mod todos;
+mod todo;
 
 pub fn route(cfg: &mut ServiceConfig) {
-    todos::todos_route(cfg);
+    todo::todos_route(cfg);
 }
