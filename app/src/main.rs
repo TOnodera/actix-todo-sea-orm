@@ -1,25 +1,35 @@
 use actix_web::{web, App, HttpServer};
 use domain::AppState;
-use sqlx::postgres::PgPoolOptions;
+use logger::log;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 mod configure;
 mod domain;
 mod logger;
 mod types;
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    let env = configure::env()?;
+async fn get_connection(database_url: &str) -> Pool<Postgres> {
     let pool = match PgPoolOptions::new()
         .max_connections(50)
-        .connect(&env.database_url)
+        .connect(&database_url)
         .await
     {
         Ok(pool) => pool,
-        Err(e) => std::process::exit(1),
+        Err(e) => {
+            log().error("データベースの接続に失敗しました。");
+            std::process::exit(1)
+        }
     };
 
-    logger::log().info("アプリケーションを起動しました。");
+    pool
+}
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    let env = configure::env()?;
+    let pool = get_connection(&env.database_url).await;
+
+    log().info("アプリケーションを起動しました。");
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(AppState { db: pool.clone() }))
