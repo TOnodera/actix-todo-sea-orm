@@ -1,8 +1,26 @@
-use app;
+use actix_web::{web, App, HttpServer};
+use domain::AppState;
+use logger::log;
+
+pub mod configure;
+pub mod domain;
+pub mod logger;
+pub mod types;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let env = app::configure::env()?;
-    let pool = app::get_connection(&env.database_url).await;
-    app::launch(pool).await
+    let env = configure::env()?;
+    let db = sea_orm::Database::connect(env.database_url)
+        .await
+        .expect("データベース接続に失敗しました。");
+
+    log().info("アプリケーションを起動しました。");
+    HttpServer::new(move || {
+        App::new()
+            .app_data(web::Data::new(AppState { db: db.clone() }))
+            .configure(configure::config)
+    })
+    .bind(("localhost", 8080))?
+    .run()
+    .await
 }

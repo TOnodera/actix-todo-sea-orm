@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod tests {
     use actix_web::{get, test, web, App, HttpResponse, Responder};
-    use app::configure;
 
     #[get("/")]
     async fn index() -> impl Responder {

@@ -1,4 +1,4 @@
-use sqlx::PgPool;
+use sea_orm::DatabaseConnection;
 
 pub mod repository;
 pub mod todo;
@@ -17,5 +17,5 @@ impl Env {
 
 // アプリケーション全体で必要な状態
 pub struct AppState {
-    pub db: PgPool,
+    pub db: DatabaseConnection,
 }

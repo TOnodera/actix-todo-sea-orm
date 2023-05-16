@@ -1,5 +1,3 @@
-use sqlx::PgPool;
-
 use crate::types::{ApplicationError, Result};
 
 pub struct TodoRepository<'a> {

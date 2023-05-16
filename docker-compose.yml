@@ -13,15 +13,3 @@ services:
       - 5432:5432
     volumes:
       - ./docker/postgres/data:/var/lib/postgresql/data
-  # テスト用データベース
-  db_test:
-    build: ./docker/postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
-    ports:
-      - 4321:5432
-    volumes:
-      - ./docker/postgres/data_test:/var/lib/postgresql/data
