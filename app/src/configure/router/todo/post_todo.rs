@@ -19,8 +19,13 @@ use crate::{
 #[post("/todo")]
 async fn handler(data: web::Data<AppState>, todo: web::Json<Todo>) -> impl Responder {
     let repository = TodoRepository::new(data.db.clone());
-    if let Err(e) = repository.create(&todo.title, &todo.body).await {
-        return HttpResponse::Ok().body("error");
+    match repository.create(&todo.title, &todo.body).await {
+        Ok(id) => HttpResponse::Created().json(json!({ "id": id })),
+        Err(e) => match e {
+            ApplicationError::DomainError(message) => {
+                HttpResponse::BadRequest().json(json!({ "message": message }))
+            }
+            _ => HttpResponse::InternalServerError().finish(),
+        },
     }
-    HttpResponse::Ok().body("post /todo")
 }
