@@ -1,5 +1,7 @@
 use actix_web::web::ServiceConfig;
 
+use crate::types::ApplicationError;
+
 mod delete_todo;
 mod get_todo;
 mod get_todos;
