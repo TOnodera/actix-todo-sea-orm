@@ -1,4 +1,5 @@
-use sea_orm_migration::prelude::*;
+use entity::todos;
+use sea_orm_migration::{prelude::*, sea_orm::entity::Set, sea_orm::ActiveModelTrait};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -34,7 +35,18 @@ impl MigrationTrait for Migration {
                     )
                     .to_owned(),
             )
-            .await
+            .await?;
+
+        let db = manager.get_connection();
+        todos::ActiveModel {
+            title: Set(String::from("title1")),
+            body: Set(String::from("body")),
+            ..Default::default()
+        }
+        .insert(db)
+        .await?;
+
+        Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

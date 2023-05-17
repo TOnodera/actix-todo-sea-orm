@@ -6,7 +6,11 @@ use actix_web::{
 use serde_json::json;
 
 use crate::{
-    domain::{repository::TodoRepository, todo::Todo, AppState},
+    domain::{
+        repository::{self, TodoRepository},
+        todo::Todo,
+        AppState,
+    },
     types::ApplicationError,
 };
 
@@ -14,21 +18,9 @@ use crate::{
 /// todoを登録する
 #[post("/todo")]
 async fn handler(data: web::Data<AppState>, todo: web::Json<Todo>) -> impl Responder {
-    let repository = TodoRepository::new(&data.db);
-    match repository.create(&todo.title, &todo.body).await {
-        Ok(id) => HttpResponse::Ok().json(json!({ "id": id })),
-        Err(e) => match e {
-            ApplicationError::DomainError(e) => {
-                return HttpResponse::BadRequest().json(json!({ "message": e }));
-            }
-            ApplicationError::DatabaseError(e) => {
-                return HttpResponse::InternalServerError().json(json!({ "message": e }));
-            }
-            _ => {
-                return HttpResponse::InternalServerError().json(json!({
-                    "message": "サーバーエラーが発生しました。"
-                }));
-            }
-        },
+    let repository = TodoRepository::new(data.db.clone());
+    if let Err(e) = repository.create(&todo.title, &todo.body).await {
+        return HttpResponse::Ok().body("error");
     }
+    HttpResponse::Ok().body("post /todo")
 }
