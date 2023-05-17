@@ -3,10 +3,21 @@ use actix_web::{
     web::{self},
     HttpResponse, Responder,
 };
+use serde_json::json;
+
+use crate::{
+    configure::router::error_response,
+    domain::{repository::TodoRepository, AppState},
+};
 
 /// Delete /todo/{id}
 /// idで指定されたtodoを削除する
 #[delete("/todo/{id}")]
-async fn handler(id: web::Path<u32>) -> impl Responder {
-    HttpResponse::Ok().body(format!("{}", id))
+async fn handler(data: web::Data<AppState>, path_params: web::Path<i32>) -> impl Responder {
+    let repository = TodoRepository::new(data.db.clone());
+    let id = path_params.into_inner();
+    match repository.delete(id).await {
+        Ok(rows_affected) => HttpResponse::Ok().json(json!({ "rows_affected": rows_affected })),
+        Err(e) => error_response(e),
+    }
 }
