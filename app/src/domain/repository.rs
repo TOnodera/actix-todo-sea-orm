@@ -1,19 +1,24 @@
+use actix_web::cookie::time::util;
+use chrono::format::Fixed;
+use chrono::{FixedOffset, Local, TimeZone, Utc};
 use entity::todos;
 use sea_orm::entity::Set;
-use sea_orm::{DatabaseConnection, EntityTrait};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait};
 use sea_orm::{ModelTrait, QueryOrder};
 
 use crate::types::{ApplicationError, Result};
+use crate::{configure, utils};
 
 use super::todo::Todo;
 
 pub struct TodoRepository {
     db: DatabaseConnection,
+    tz: FixedOffset,
 }
 
 impl TodoRepository {
-    pub fn new(db: DatabaseConnection) -> Self {
-        Self { db }
+    pub fn new(db: DatabaseConnection, tz: FixedOffset) -> Self {
+        Self { db, tz }
     }
 
     // 登録
@@ -45,8 +50,8 @@ impl TodoRepository {
                 id: Some(todo.id),
                 title: todo.title,
                 body: todo.body,
-                created_at: Some(todo.created_at),
-                updated_at: Some(todo.updated_at),
+                created_at: Some(todo.created_at.with_timezone(&self.tz)),
+                updated_at: Some(todo.updated_at.with_timezone(&self.tz)),
             })
             .collect::<Vec<Todo>>();
         Ok(todos)
@@ -64,12 +69,33 @@ impl TodoRepository {
                 id: Some(todo.id),
                 title: todo.title,
                 body: todo.body,
-                created_at: Some(todo.created_at),
-                updated_at: Some(todo.updated_at),
+                created_at: Some(todo.created_at.with_timezone(&self.tz)),
+                updated_at: Some(todo.updated_at.with_timezone(&self.tz)),
             }),
             None => None,
         };
         Ok(todo)
+    }
+
+    // id指定でデータを更新
+    pub async fn update(&self, id: i32, new_todo: Todo) -> Result<()> {
+        let model = todos::Entity::find_by_id(id)
+            .one(&self.db)
+            .await
+            .map_err(|e| ApplicationError::DatabaseError)?;
+
+        if let Some(m) = model {
+            let mut old_model: todos::ActiveModel = m.into();
+            old_model.title = Set(new_todo.title);
+            old_model.body = Set(new_todo.body);
+            old_model.created_at = Set(utils::now()?);
+            old_model.updated_at = Set(utils::now()?);
+            old_model
+                .update(&self.db)
+                .await
+                .map_err(|e| ApplicationError::DatabaseError)?;
+        }
+        Ok(())
     }
 
     // id指定でデータを削除

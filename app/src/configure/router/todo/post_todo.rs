@@ -11,7 +11,7 @@ use crate::{
 #[post("/todo")]
 async fn handler(data: web::Data<AppState>, todo: web::Json<Todo>) -> impl Responder {
     // リポジトリ生成
-    let repository = TodoRepository::new(data.db.clone());
+    let repository = TodoRepository::new(data.db.clone(), data.tz.clone());
     // 登録実行
     match repository.create(&todo.title, &todo.body).await {
         // OkならIDを返す

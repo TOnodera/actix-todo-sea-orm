@@ -1,3 +1,4 @@
+use chrono::FixedOffset;
 use sea_orm::DatabaseConnection;
 
 pub mod repository;
@@ -18,4 +19,5 @@ impl Env {
 // アプリケーション全体で必要な状態
 pub struct AppState {
     pub db: DatabaseConnection,
+    pub tz: FixedOffset,
 }

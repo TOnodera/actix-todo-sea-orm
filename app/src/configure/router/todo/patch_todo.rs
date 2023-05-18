@@ -4,11 +4,23 @@ use actix_web::{
     HttpResponse, Responder,
 };
 
-use crate::domain::todo::Todo;
+use crate::{
+    configure::router::error_response,
+    domain::{repository::TodoRepository, todo::Todo, AppState},
+};
 
 /// Patch /todo
 /// todoを更新する
-#[patch("/todo")]
-async fn handler(todo: web::Json<Todo>) -> impl Responder {
-    HttpResponse::Ok().json(todo)
+#[patch("/todo/{id}")]
+async fn handler(
+    data: web::Data<AppState>,
+    path_params: web::Path<i32>,
+    todo: web::Json<Todo>,
+) -> impl Responder {
+    let repository = TodoRepository::new(data.db.clone(), data.tz.clone());
+    let id = path_params.into_inner();
+    match repository.update(id, todo.into()).await {
+        Ok(()) => HttpResponse::Ok().finish(),
+        Err(e) => error_response(e),
+    }
 }

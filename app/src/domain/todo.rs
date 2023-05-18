@@ -1,5 +1,5 @@
+use actix_web::web;
 use chrono::FixedOffset;
-use sea_orm::prelude::DateTimeWithTimeZone;
 use serde::{Deserialize, Serialize};
 
 // Todoのデータ構造
@@ -10,4 +10,16 @@ pub struct Todo {
     pub body: String,
     pub created_at: Option<chrono::DateTime<FixedOffset>>,
     pub updated_at: Option<chrono::DateTime<FixedOffset>>,
+}
+
+impl From<web::Json<Todo>> for Todo {
+    fn from(todo: web::Json<Todo>) -> Self {
+        Self {
+            id: todo.id,
+            title: todo.title.to_string(),
+            body: todo.body.to_string(),
+            created_at: todo.created_at,
+            updated_at: todo.updated_at,
+        }
+    }
 }

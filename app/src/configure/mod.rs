@@ -1,11 +1,15 @@
 use actix_web::web::ServiceConfig;
+use chrono::FixedOffset;
 
-use crate::domain::Env;
+use crate::{
+    domain::Env,
+    types::{ApplicationError, Result},
+};
 
 mod router;
 
 /// アプリケーション全体の設定
-pub fn config(cfg:&mut ServiceConfig) {
+pub fn config(cfg: &mut ServiceConfig) {
     // ルート設定
     router::route(cfg);
 }
@@ -16,8 +20,14 @@ pub fn env() -> std::io::Result<Env> {
         Ok(url) => Env::new(&url),
         Err(e) => {
             panic!();
-        } 
+        }
     };
 
     Ok(DATABASE_URL)
+}
+
+pub fn tz() -> FixedOffset {
+    let tz_sec = 3600 * 9;
+    let tz = FixedOffset::east_opt(tz_sec).expect("タイムゾーンの取得に失敗しました。");
+    tz
 }
