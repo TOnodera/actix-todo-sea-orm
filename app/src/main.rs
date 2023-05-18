@@ -1,12 +1,7 @@
 use actix_web::{web, App, HttpServer};
-use domain::AppState;
-use logger::log;
-
-pub mod configure;
-pub mod domain;
-pub mod logger;
-pub mod types;
-pub mod utils;
+use app::configure;
+use app::domain::AppState;
+use app::logger::log;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

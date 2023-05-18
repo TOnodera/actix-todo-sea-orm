@@ -88,7 +88,6 @@ impl TodoRepository {
             let mut old_model: todos::ActiveModel = m.into();
             old_model.title = Set(new_todo.title);
             old_model.body = Set(new_todo.body);
-            old_model.created_at = Set(utils::now()?);
             old_model.updated_at = Set(utils::now()?);
             old_model
                 .update(&self.db)
