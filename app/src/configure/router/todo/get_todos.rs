@@ -16,7 +16,7 @@ use crate::{
 async fn handler(data: web::Data<AppState>) -> impl Responder {
     let repository = TodoRepository::new(data.db.clone(), data.tz.clone());
     match repository.gets_all().await {
-        Ok(todos) => HttpResponse::Ok().json(json!({ "todos": todos })),
+        Ok(todos) => HttpResponse::Ok().json(todos),
         Err(e) => error_response(e),
     }
 }
