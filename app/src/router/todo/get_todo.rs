@@ -1,8 +1,8 @@
 use actix_web::{get, web, HttpResponse, Responder};
 
 use crate::{
-    configure::router::error_response,
     domain::{repository::TodoRepository, AppState},
+    router::error_response,
 };
 
 /// Get /todo/{id}

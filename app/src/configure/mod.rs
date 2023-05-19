@@ -1,10 +1,9 @@
 use actix_web::web::ServiceConfig;
 use chrono::FixedOffset;
 
-use crate::domain::Env;
+use crate::{domain::Env, router};
 
 pub mod response;
-mod router;
 
 /// アプリケーション全体の設定
 pub fn config(cfg: &mut ServiceConfig) {

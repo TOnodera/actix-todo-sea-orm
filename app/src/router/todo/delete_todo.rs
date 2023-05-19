@@ -3,11 +3,10 @@ use actix_web::{
     web::{self},
     HttpResponse, Responder,
 };
-use serde_json::json;
 
 use crate::{
-    configure::router::error_response,
     domain::{repository::TodoRepository, AppState},
+    router::error_response,
 };
 
 /// Delete /todo/{id}

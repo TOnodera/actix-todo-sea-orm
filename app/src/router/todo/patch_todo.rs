@@ -5,8 +5,8 @@ use actix_web::{
 };
 
 use crate::{
-    configure::router::error_response,
     domain::{repository::TodoRepository, todo::Todo, AppState},
+    router::error_response,
 };
 
 /// Patch /todo

@@ -1,9 +1,9 @@
 use actix_web::{post, web, HttpResponse, Responder};
-use serde_json::json;
 
 use crate::{
-    configure::{response::PostTodoResponse, router::error_response},
+    configure::response::PostTodoResponse,
     domain::{repository::TodoRepository, todo::Todo, AppState},
+    router::error_response,
 };
 
 /// Post /todo
