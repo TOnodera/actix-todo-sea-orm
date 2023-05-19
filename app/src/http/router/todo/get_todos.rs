@@ -6,7 +6,7 @@ use actix_web::{
 
 use crate::{
     domain::{repository::TodoRepository, AppState},
-    router::error_response,
+    http::router::error_response,
 };
 
 /// Get /todos

@@ -1,7 +1,8 @@
 use actix_web::web::ServiceConfig;
 use chrono::FixedOffset;
 
-use crate::{domain::Env, router};
+use crate::domain::Env;
+use crate::http::router;
 
 pub mod response;
 

@@ -3,7 +3,7 @@ use actix_web::{post, web, HttpResponse, Responder};
 use crate::{
     configure::response::PostTodoResponse,
     domain::{repository::TodoRepository, todo::Todo, AppState},
-    router::error_response,
+    http::router::error_response,
 };
 
 /// Post /todo
