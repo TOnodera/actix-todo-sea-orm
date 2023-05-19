@@ -37,15 +37,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        let db = manager.get_connection();
-        todos::ActiveModel {
-            title: Set(String::from("title1")),
-            body: Set(String::from("body")),
-            ..Default::default()
-        }
-        .insert(db)
-        .await?;
-
         Ok(())
     }
 

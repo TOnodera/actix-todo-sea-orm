@@ -1,11 +1,9 @@
 use actix_web::web::ServiceConfig;
 use chrono::FixedOffset;
 
-use crate::{
-    domain::Env,
-    types::{ApplicationError, Result},
-};
+use crate::domain::Env;
 
+pub mod response;
 mod router;
 
 /// アプリケーション全体の設定

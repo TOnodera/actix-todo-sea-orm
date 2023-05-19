@@ -17,7 +17,7 @@ async fn handler(data: web::Data<AppState>, path_params: web::Path<i32>) -> impl
     let repository = TodoRepository::new(data.db.clone(), data.tz.clone());
     let id = path_params.into_inner();
     match repository.delete(id).await {
-        Ok(rows_affected) => HttpResponse::Ok().json(json!({ "rows_affected": rows_affected })),
+        Ok(rows_affected) => HttpResponse::Ok().finish(),
         Err(e) => error_response(e),
     }
 }

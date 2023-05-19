@@ -2,7 +2,7 @@ use actix_web::{post, web, HttpResponse, Responder};
 use serde_json::json;
 
 use crate::{
-    configure::router::error_response,
+    configure::{response::PostTodoResponse, router::error_response},
     domain::{repository::TodoRepository, todo::Todo, AppState},
 };
 
@@ -15,7 +15,7 @@ async fn handler(data: web::Data<AppState>, todo: web::Json<Todo>) -> impl Respo
     // 登録実行
     match repository.create(&todo.title, &todo.body).await {
         // OkならIDを返す
-        Ok(id) => HttpResponse::Created().json(json!({ "id": id })),
+        Ok(id) => HttpResponse::Created().json(PostTodoResponse::new(id)),
         // それ以外の場合はエラーレスポンスを生成する
         Err(error) => error_response(error),
     }
