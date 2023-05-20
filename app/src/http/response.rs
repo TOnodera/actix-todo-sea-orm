@@ -1,10 +1,9 @@
 use actix_web::HttpResponse;
 use chrono::{DateTime, FixedOffset};
-use entity::todos;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-use crate::types::ApplicationError;
+use crate::{domain::value::todo::Todo, types::ApplicationError};
 
 // Post /todo Response
 #[derive(Deserialize, Serialize)]
@@ -43,8 +42,8 @@ impl GetTodoResponse {
         }
     }
 }
-impl From<todos::Model> for GetTodoResponse {
-    fn from(todo: todos::Model) -> Self {
+impl From<Todo> for GetTodoResponse {
+    fn from(todo: Todo) -> Self {
         GetTodoResponse::new(
             todo.id,
             &todo.title,

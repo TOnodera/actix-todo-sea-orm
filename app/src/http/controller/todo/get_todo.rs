@@ -1,7 +1,7 @@
 use actix_web::{get, web, HttpResponse, Responder};
 
 use crate::{
-    domain::{repository::TodoRepositoryTrait, AppState},
+    domain::{ todo::TodoDomain, AppState},
     http::{response::error_response, response::GetTodoResponse},
     infrastructure::resporitory::TodoRepository,
 };
@@ -11,11 +11,12 @@ use crate::{
 #[get("/todo/{id}")]
 async fn handler(data: web::Data<AppState>, path_params: web::Path<i32>) -> impl Responder {
     let repository = TodoRepository::new(data.db.clone());
+    let todo = TodoDomain::new(repository);
     let id = path_params.into_inner();
-    match repository.get(id).await {
+    match todo.get(id).await {
         Ok(result) => {
-            if let Some(todo) = result {
-                return HttpResponse::Ok().json(GetTodoResponse::from(todo));
+            if let Some(value) = result {
+                return HttpResponse::Ok().json(GetTodoResponse::from(value));
             }
             return HttpResponse::NotFound().finish();
         }

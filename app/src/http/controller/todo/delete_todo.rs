@@ -1,11 +1,7 @@
-use actix_web::{
-    delete,
-    web::{self},
-    HttpResponse, Responder,
-};
+use actix_web::{delete, web, HttpResponse, Responder};
 
 use crate::{
-    domain::{repository::TodoRepositoryTrait, AppState},
+    domain::{todo::TodoDomain, AppState},
     http::response::error_response,
     infrastructure::resporitory::TodoRepository,
 };
@@ -15,8 +11,9 @@ use crate::{
 #[delete("/todo/{id}")]
 async fn handler(data: web::Data<AppState>, path_params: web::Path<i32>) -> impl Responder {
     let repository = TodoRepository::new(data.db.clone());
+    let todo = TodoDomain::new(repository);
     let id = path_params.into_inner();
-    match repository.delete(id).await {
+    match todo.delete(id).await {
         Ok(_) => HttpResponse::Ok().finish(),
         Err(e) => error_response(e),
     }

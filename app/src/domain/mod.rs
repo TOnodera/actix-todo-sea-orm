@@ -3,6 +3,7 @@ use sea_orm::DatabaseConnection;
 
 pub mod repository;
 pub mod todo;
+pub mod value;
 
 // 環境変数用の構造体
 pub struct Env {
