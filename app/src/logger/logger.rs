@@ -4,11 +4,11 @@ use std::{fs::File, io::Read};
 use crate::types::{ApplicationError, Result};
 
 fn read_config_file() -> Result<String> {
-    let mut file = File::open("./src/logger/config.json").map_err(|e| {
+    let mut file = File::open("./src/logger/config.json").map_err(|_| {
         ApplicationError::IoError(String::from("ログ設定ファイルの読み込みに失敗しました。"))
     })?;
     let mut contents = String::new();
-    file.read_to_string(&mut contents).map_err(|e| {
+    file.read_to_string(&mut contents).map_err(|_| {
         ApplicationError::IoError(String::from("ログ設定ファイルのロードに失敗しました。"))
     })?;
 
@@ -16,7 +16,7 @@ fn read_config_file() -> Result<String> {
 }
 
 fn parse_config_file(config_file: &str) -> Result<LogConfig> {
-    let config: LogConfig = serde_json::from_str(config_file).map_err(|e| {
+    let config: LogConfig = serde_json::from_str(config_file).map_err(|_| {
         ApplicationError::UnknownError(String::from("コンフィグファイルの形式が不正です。"))
     })?;
     Ok(config)

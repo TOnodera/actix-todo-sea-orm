@@ -1,8 +1,10 @@
+use actix_web::HttpResponse;
 use chrono::{DateTime, FixedOffset};
 use entity::todos;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 
-use crate::domain::todo::Todo;
+use crate::types::ApplicationError;
 
 // Post /todo Response
 #[derive(Deserialize, Serialize)]
@@ -50,5 +52,16 @@ impl From<todos::Model> for GetTodoResponse {
             todo.created_at,
             todo.updated_at,
         )
+    }
+}
+
+// リポジトリ層、ドメイン層のエラーをレスポンスに変換
+pub fn error_response(error: ApplicationError) -> HttpResponse {
+    match error {
+        // ドメインエラーならエラーメッセージ返却
+        ApplicationError::DomainError(message) => {
+            HttpResponse::BadRequest().json(json!({ "message": message }))
+        }
+        _ => HttpResponse::InternalServerError().finish(),
     }
 }

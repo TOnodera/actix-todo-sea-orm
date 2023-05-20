@@ -1,24 +1,18 @@
-use actix_web::cookie::time::util;
-use chrono::format::Fixed;
-use chrono::{FixedOffset, Local, TimeZone, Utc};
 use entity::todos;
 use sea_orm::entity::Set;
 use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait};
 use sea_orm::{ModelTrait, QueryOrder};
 
 use crate::types::{ApplicationError, Result};
-use crate::{configure, utils};
-
-use super::todo;
+use crate::utils;
 
 pub struct TodoRepository {
     db: DatabaseConnection,
-    tz: FixedOffset,
 }
 
 impl TodoRepository {
-    pub fn new(db: DatabaseConnection, tz: FixedOffset) -> Self {
-        Self { db, tz }
+    pub fn new(db: DatabaseConnection) -> Self {
+        Self { db }
     }
 
     // 登録
@@ -32,7 +26,7 @@ impl TodoRepository {
         let insert_result = todos::Entity::insert(todo)
             .exec(&self.db)
             .await
-            .map_err(|e| return ApplicationError::DatabaseError)?;
+            .map_err(|_| return ApplicationError::DatabaseError)?;
         Ok(insert_result.last_insert_id)
     }
 
@@ -42,7 +36,7 @@ impl TodoRepository {
             .order_by_desc(todos::Column::UpdatedAt)
             .all(&self.db)
             .await
-            .map_err(|e| ApplicationError::DatabaseError)?;
+            .map_err(|_| ApplicationError::DatabaseError)?;
 
         Ok(models)
     }
@@ -52,7 +46,7 @@ impl TodoRepository {
         let model = todos::Entity::find_by_id(id)
             .one(&self.db)
             .await
-            .map_err(|e| ApplicationError::DatabaseError)?;
+            .map_err(|_| ApplicationError::DatabaseError)?;
 
         Ok(model)
     }
@@ -62,7 +56,7 @@ impl TodoRepository {
         let model = todos::Entity::find_by_id(id)
             .one(&self.db)
             .await
-            .map_err(|e| ApplicationError::DatabaseError)?;
+            .map_err(|_| ApplicationError::DatabaseError)?;
 
         if let Some(m) = model {
             let mut old_model: todos::ActiveModel = m.into();
@@ -72,7 +66,7 @@ impl TodoRepository {
             old_model
                 .update(&self.db)
                 .await
-                .map_err(|e| ApplicationError::DatabaseError)?;
+                .map_err(|_| ApplicationError::DatabaseError)?;
         }
         Ok(())
     }
@@ -82,13 +76,13 @@ impl TodoRepository {
         let model = todos::Entity::find_by_id(id)
             .one(&self.db)
             .await
-            .map_err(|e| ApplicationError::DatabaseError)?;
+            .map_err(|_| ApplicationError::DatabaseError)?;
 
         if let Some(todo) = model {
             let res = todo
                 .delete(&self.db)
                 .await
-                .map_err(|e| ApplicationError::DatabaseError)?;
+                .map_err(|_| ApplicationError::DatabaseError)?;
             return Ok(res.rows_affected);
         }
         Ok(0)

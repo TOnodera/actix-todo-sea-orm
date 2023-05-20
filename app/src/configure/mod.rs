@@ -12,14 +12,14 @@ pub fn config(cfg: &mut ServiceConfig) {
 
 pub fn env() -> std::io::Result<Env> {
     dotenv::dotenv().ok();
-    let DATABASE_URL = match std::env::var("DATABASE_URL") {
+    let database_url = match std::env::var("DATABASE_URL") {
         Ok(url) => Env::new(&url),
-        Err(e) => {
+        Err(_) => {
             panic!();
         }
     };
 
-    Ok(DATABASE_URL)
+    Ok(database_url)
 }
 
 pub fn tz() -> FixedOffset {

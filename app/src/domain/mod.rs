@@ -9,9 +9,9 @@ pub struct Env {
     pub database_url: String,
 }
 impl Env {
-    pub fn new(DATABASE_URL: &str) -> Self {
+    pub fn new(database_url: &str) -> Self {
         Self {
-            database_url: DATABASE_URL.to_string(),
+            database_url: database_url.to_string(),
         }
     }
 }

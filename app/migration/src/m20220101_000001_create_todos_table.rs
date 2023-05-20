@@ -1,5 +1,4 @@
-use entity::todos;
-use sea_orm_migration::{prelude::*, sea_orm::entity::Set, sea_orm::ActiveModelTrait};
+use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;

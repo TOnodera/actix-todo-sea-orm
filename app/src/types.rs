@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use thiserror::Error;
 
 pub type Result<T> = anyhow::Result<T, ApplicationError>;
