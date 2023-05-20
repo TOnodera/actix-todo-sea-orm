@@ -17,7 +17,11 @@ mod tests {
         let (tz, db, log) = utils::setup().await;
         let app = test::init_service(
             App::new()
-                .app_data(web::Data::new(AppState { db: db.clone(), tz, log: log.clone() }))
+                .app_data(web::Data::new(AppState {
+                    db: db.clone(),
+                    tz,
+                    log: log.clone(),
+                }))
                 .configure(configure::config),
         )
         .await;
@@ -41,6 +45,14 @@ mod tests {
         let response: GetTodoResponse = test::call_and_read_body_json(&app, req).await;
         assert_eq!(&response.title, "新規登録");
         assert_eq!(&response.body, "新規でTODOを登録しました。");
+
+        // タイムゾーン設定が正しいことを確認する
+        let tz = response.created_at.timezone();
+        let diff = tz.utc_minus_local();
+        assert_eq!(diff, -9 * 3600);
+        let tz = response.updated_at.timezone();
+        let diff = tz.utc_minus_local();
+        assert_eq!(diff, -9 * 3600);
 
         //
         // 更新
