@@ -1,1 +1,1 @@
-# actix-web,sea-ormでテストできるtodoアプリ作成
+# actix-web,sea-ormでテストできるtodoアプリのapi作成
