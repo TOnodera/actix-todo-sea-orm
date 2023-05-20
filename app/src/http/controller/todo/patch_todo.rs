@@ -5,8 +5,8 @@ use actix_web::{
 };
 
 use crate::{
-    domain::{repository::TodoRepository, AppState},
-    http::{request::PatchTodoRequest, response::error_response},
+    domain::{repository::TodoRepositoryTrait, AppState},
+    http::{request::PatchTodoRequest, response::error_response}, infrastructure::resporitory::TodoRepository,
 };
 
 /// Patch /todo
@@ -20,7 +20,7 @@ async fn handler(
     let repository = TodoRepository::new(data.db.clone());
     let id = path_params.into_inner();
     match repository.update(id, &todo.title, &todo.body).await {
-        Ok(()) => HttpResponse::Ok().finish(),
+        Ok(_) => HttpResponse::Ok().finish(),
         Err(e) => error_response(e),
     }
 }

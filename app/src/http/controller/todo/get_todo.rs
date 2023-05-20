@@ -1,8 +1,9 @@
 use actix_web::{get, web, HttpResponse, Responder};
 
 use crate::{
-    domain::{repository::TodoRepository, AppState},
+    domain::{repository::TodoRepositoryTrait, AppState},
     http::{response::error_response, response::GetTodoResponse},
+    infrastructure::resporitory::TodoRepository,
 };
 
 /// Get /todo/{id}

@@ -5,8 +5,9 @@ use actix_web::{
 };
 
 use crate::{
-    domain::{repository::TodoRepository, AppState},
+    domain::{repository::TodoRepositoryTrait, AppState},
     http::response::error_response,
+    infrastructure::resporitory::TodoRepository,
 };
 
 /// Delete /todo/{id}

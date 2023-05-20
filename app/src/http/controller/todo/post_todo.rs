@@ -1,9 +1,10 @@
 use actix_web::{post, web, HttpResponse, Responder};
 
 use crate::{
-    domain::{repository::TodoRepository, AppState},
+    domain::{repository::TodoRepositoryTrait, AppState},
     http::response::error_response,
     http::{request::PostTodoRequest, response::PostTodoResponse},
+    infrastructure::resporitory::TodoRepository,
 };
 
 /// Post /todo

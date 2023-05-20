@@ -21,3 +21,4 @@ simple-log = "1.6.0"
 thiserror = "1.0.40"
 sea-orm = { version = "^0.11", features = [ "sqlx-postgres", "sqlx-sqlite", "runtime-actix-rustls", "macros" ] }
 tokio = "1.28.1"
+async-trait = "0.1.68"
