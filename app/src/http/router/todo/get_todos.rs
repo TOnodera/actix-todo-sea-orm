@@ -6,7 +6,7 @@ use actix_web::{
 
 use crate::{
     domain::{repository::TodoRepository, AppState},
-    http::router::error_response,
+    http::{response::GetTodoResponse, router::error_response},
 };
 
 /// Get /todos
@@ -15,7 +15,13 @@ use crate::{
 async fn handler(data: web::Data<AppState>) -> impl Responder {
     let repository = TodoRepository::new(data.db.clone(), data.tz.clone());
     match repository.gets_all().await {
-        Ok(todos) => HttpResponse::Ok().json(todos),
+        Ok(models) => {
+            let todos = models
+                .into_iter()
+                .map(|todo| todo.into())
+                .collect::<Vec<GetTodoResponse>>();
+            HttpResponse::Ok().json(todos)
+        }
         Err(e) => error_response(e),
     }
 }

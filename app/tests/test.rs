@@ -5,8 +5,9 @@ mod tests {
     use crate::utils;
     use actix_web::{test, web, App};
     use app::{
-        configure::{self, response::PostTodoResponse},
+        configure,
         domain::{todo::Todo, AppState},
+        http::response::PostTodoResponse,
     };
     use serde_json::json;
 

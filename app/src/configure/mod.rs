@@ -4,8 +4,6 @@ use chrono::FixedOffset;
 use crate::domain::Env;
 use crate::http::router;
 
-pub mod response;
-
 /// アプリケーション全体の設定
 pub fn config(cfg: &mut ServiceConfig) {
     // ルート設定

@@ -5,8 +5,8 @@ use actix_web::{
 };
 
 use crate::{
-    domain::{repository::TodoRepository, todo::Todo, AppState},
-    http::router::error_response,
+    domain::{repository::TodoRepository, AppState},
+    http::{request::PatchTodoRequest, router::error_response},
 };
 
 /// Patch /todo
@@ -15,11 +15,11 @@ use crate::{
 async fn handler(
     data: web::Data<AppState>,
     path_params: web::Path<i32>,
-    todo: web::Json<Todo>,
+    todo: web::Json<PatchTodoRequest>,
 ) -> impl Responder {
     let repository = TodoRepository::new(data.db.clone(), data.tz.clone());
     let id = path_params.into_inner();
-    match repository.update(id, todo.into()).await {
+    match repository.update(id, &todo.title, &todo.body).await {
         Ok(()) => HttpResponse::Ok().finish(),
         Err(e) => error_response(e),
     }
