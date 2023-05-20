@@ -14,10 +14,10 @@ mod tests {
 
     #[actix_web::test]
     async fn 正常系ユースケーステスト() {
-        let (tz, db) = utils::setup().await;
+        let (tz, db, log) = utils::setup().await;
         let app = test::init_service(
             App::new()
-                .app_data(web::Data::new(AppState { db: db.clone(), tz }))
+                .app_data(web::Data::new(AppState { db: db.clone(), tz, log: log.clone() }))
                 .configure(configure::config),
         )
         .await;

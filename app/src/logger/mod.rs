@@ -2,6 +2,7 @@ use simple_log::{debug, info, log::error};
 
 pub mod logger;
 
+#[derive(Clone)]
 pub struct Logger;
 impl Logger {
     pub fn new() -> Self {
