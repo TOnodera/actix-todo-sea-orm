@@ -9,11 +9,15 @@ pub async fn setup() -> (FixedOffset, DatabaseConnection) {
     let db = sea_orm::Database::connect("sqlite::memory:")
         .await
         .expect("テストデータベースの接続に失敗しました。");
-    migration::Migrator::up(&db, None).await;
+    migration::Migrator::up(&db, None)
+        .await
+        .expect("テストDBのマイグレーションに失敗しました。");
     (tz, db)
 }
 
 /// テスト用のDBをリセット
 pub async fn tear_down(db: &DatabaseConnection) {
-    migration::Migrator::reset(db).await;
+    migration::Migrator::reset(db)
+        .await
+        .expect("テストDBのリセットに失敗しました。");
 }
