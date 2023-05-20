@@ -6,10 +6,11 @@ mod tests {
     use actix_web::{test, web, App};
     use app::{
         configure,
-        domain::{todo::Todo, AppState},
-        http::response::PostTodoResponse,
+        domain::AppState,
+        http::response::{GetTodoResponse, PostTodoResponse},
     };
     use serde_json::json;
+    use tokio::time::{sleep, Duration};
 
     #[actix_web::test]
     async fn 正常系ユースケーステスト() {
@@ -37,7 +38,7 @@ mod tests {
         assert_eq!(response.id, 1);
         // id 指定でデータを取得する
         let req = test::TestRequest::get().uri("/todo/1").to_request();
-        let response: Todo = test::call_and_read_body_json(&app, req).await;
+        let response: GetTodoResponse = test::call_and_read_body_json(&app, req).await;
         assert_eq!(&response.title, "新規登録");
         assert_eq!(&response.body, "新規でTODOを登録しました。");
 
@@ -58,7 +59,7 @@ mod tests {
         assert!(response.status().is_success());
         // id 指定でデータを取得する
         let req = test::TestRequest::get().uri("/todo/1").to_request();
-        let response: Todo = test::call_and_read_body_json(&app, req).await;
+        let response: GetTodoResponse = test::call_and_read_body_json(&app, req).await;
         assert_eq!(&response.title, "更新登録");
         assert_eq!(&response.body, "更新でTODOを登録しました。");
 
@@ -95,10 +96,16 @@ mod tests {
                 .to_request();
             let response = test::call_service(&app, req).await;
             assert!(response.status().is_success());
+            sleep(Duration::from_secs(1)).await;
         }
         // 一覧取得
         let req = test::TestRequest::get().uri("/todos").to_request();
-        let response: Vec<Todo> = test::call_and_read_body_json(&app, req).await;
+        let response: Vec<GetTodoResponse> = test::call_and_read_body_json(&app, req).await;
+
+        // 登録新しい順にデータが返ってくること
+        assert_eq!(&response[0].title, "title3");
+        assert_eq!(&response[1].title, "title2");
+        assert_eq!(&response[2].title, "title1");
 
         utils::tear_down(&db).await;
     }
