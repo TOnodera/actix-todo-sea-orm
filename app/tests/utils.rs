@@ -1,22 +1,18 @@
-use app::{
-    configure,
-    logger::{self, Logger},
-};
+use app::configure;
 use chrono::FixedOffset;
 use migration::MigratorTrait;
 use sea_orm::DatabaseConnection;
 
 /// テスト用のDBを作成してマイグレーションを実行する
-pub async fn setup() -> (FixedOffset, DatabaseConnection, Logger) {
+pub async fn setup() -> (FixedOffset, DatabaseConnection) {
     let tz = configure::tz();
-    let log = logger::log();
     let db = sea_orm::Database::connect("sqlite::memory:")
         .await
         .expect("テストデータベースの接続に失敗しました。");
     migration::Migrator::up(&db, None)
         .await
         .expect("テストDBのマイグレーションに失敗しました。");
-    (tz, db, log)
+    (tz, db)
 }
 
 /// テスト用のDBをリセット

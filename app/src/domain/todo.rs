@@ -1,6 +1,9 @@
-use crate::types::Result;
+use crate::types::{ApplicationError, Result};
 
 use super::{repository::TodoRepositoryTrait, value::todo::Todo};
+
+pub const MAX_TITLE_LENGTH: usize = 24;
+pub const MAX_BODY_LENGTH: usize = 1024;
 
 pub struct TodoDomain<T>
 where
@@ -20,6 +23,23 @@ where
         Self { repository }
     }
     pub async fn create(&self, title: &str, body: &str) -> Result<i32> {
+        if title.chars().count() == 0 {
+            return Err(ApplicationError::DomainError(String::from(
+                "タイトルを入力して下さい。",
+            )));
+        }
+        if MAX_TITLE_LENGTH < title.chars().count() {
+            return Err(ApplicationError::DomainError(format!(
+                "タイトルは{}文字以内で入力して下さい。",
+                MAX_TITLE_LENGTH
+            )));
+        }
+        if MAX_BODY_LENGTH < body.chars().count() {
+            return Err(ApplicationError::DomainError(format!(
+                "本文は{}文字以内で入力して下さい。",
+                MAX_BODY_LENGTH
+            )));
+        }
         let id = self.repository.create(title, body).await?;
         Ok(id)
     }
@@ -37,6 +57,12 @@ where
         Ok(todos)
     }
     pub async fn update(&self, id: i32, title: &str, body: &str) -> Result<bool> {
+        if MAX_TITLE_LENGTH < title.chars().count() {
+            return Err(ApplicationError::DomainError(format!(
+                "タイトルは{}文字以内で入力して下さい。",
+                MAX_BODY_LENGTH
+            )));
+        }
         let updated = self.repository.update(id, title, body).await?;
         Ok(updated)
     }

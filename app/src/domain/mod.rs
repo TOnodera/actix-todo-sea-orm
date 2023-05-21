@@ -1,8 +1,6 @@
 use chrono::FixedOffset;
 use sea_orm::DatabaseConnection;
 
-use crate::logger::Logger;
-
 pub mod repository;
 pub mod todo;
 pub mod value;
@@ -23,5 +21,4 @@ impl Env {
 pub struct AppState {
     pub db: DatabaseConnection,
     pub tz: FixedOffset,
-    pub log: Logger,
 }

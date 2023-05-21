@@ -1,9 +1,8 @@
 use actix_web::HttpResponse;
 use chrono::{DateTime, FixedOffset};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 
-use crate::{domain::value::todo::Todo, types::ApplicationError};
+use crate::{domain::value::todo::Todo, logger::LOG, types::ApplicationError};
 
 // Post /todo Response
 #[derive(Deserialize, Serialize)]
@@ -59,8 +58,23 @@ pub fn error_response(error: ApplicationError) -> HttpResponse {
     match error {
         // ドメインエラーならエラーメッセージ返却
         ApplicationError::DomainError(message) => {
-            HttpResponse::BadRequest().json(json!({ "message": message }))
+            HttpResponse::BadRequest().json(ErrorMessage::new(message))
         }
-        _ => HttpResponse::InternalServerError().finish(),
+        _ => {
+            LOG.try_lock()
+                .expect("ログ書き込み時に排他の取得に失敗しました。")
+                .error("サーバーエラーが発生しました。");
+            return HttpResponse::InternalServerError().finish();
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ErrorMessage {
+    pub message: String,
+}
+impl ErrorMessage {
+    pub fn new(message: String) -> Self {
+        Self { message }
     }
 }

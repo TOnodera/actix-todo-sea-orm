@@ -6,22 +6,18 @@ mod tests {
     use actix_web::{test, web, App};
     use app::{
         configure,
-        domain::AppState,
-        http::response::{GetTodoResponse, PostTodoResponse},
+        domain::{todo::MAX_BODY_LENGTH, AppState},
+        http::response::{ErrorMessage, GetTodoResponse, PostTodoResponse},
     };
     use serde_json::json;
     use tokio::time::{sleep, Duration};
 
     #[actix_web::test]
     async fn 正常系ユースケーステスト() {
-        let (tz, db, log) = utils::setup().await;
+        let (tz, db) = utils::setup().await;
         let app = test::init_service(
             App::new()
-                .app_data(web::Data::new(AppState {
-                    db: db.clone(),
-                    tz,
-                    log: log.clone(),
-                }))
+                .app_data(web::Data::new(AppState { db: db.clone(), tz }))
                 .configure(configure::config),
         )
         .await;
@@ -120,5 +116,61 @@ mod tests {
         assert_eq!(&response[2].title, "title1");
 
         utils::tear_down(&db).await;
+    }
+
+    #[actix_web::test]
+    async fn 異常系ユースケーステスト() {
+        let (tz, db) = utils::setup().await;
+        let app = test::init_service(
+            App::new()
+                .app_data(web::Data::new(AppState { db: db.clone(), tz }))
+                .configure(configure::config),
+        )
+        .await;
+
+        //
+        // Post Todo 新規登録
+        // タイトル未入力
+        //
+        let post = json!({
+            "title": "",
+            "body": "新規でTODOを登録しました。"
+        });
+        let req = test::TestRequest::post()
+            .uri("/todo")
+            .set_json(post)
+            .to_request();
+
+        let response: ErrorMessage = test::call_and_read_body_json(&app, req).await;
+        assert_eq!(response.message, "タイトルを入力して下さい。");
+
+        //
+        // Post Todo 新規登録
+        // 本文文字数境界値テスト
+        //
+        let post = json!({
+            "title": "タイトル",
+            "body": "文".repeat(MAX_BODY_LENGTH)
+        });
+        let req = test::TestRequest::post()
+            .uri("/todo")
+            .set_json(post)
+            .to_request();
+        let response: PostTodoResponse = test::call_and_read_body_json(&app, req).await;
+        assert!(response.id > 0);
+
+        let post = json!({
+            "title": "タイトル",
+            "body": "文".repeat(MAX_BODY_LENGTH + 1)
+        });
+        let req = test::TestRequest::post()
+            .uri("/todo")
+            .set_json(post)
+            .to_request();
+        let response: ErrorMessage = test::call_and_read_body_json(&app, req).await;
+        assert_eq!(
+            response.message,
+            format!("本文は{}文字以内で入力して下さい。", MAX_BODY_LENGTH)
+        );
     }
 }

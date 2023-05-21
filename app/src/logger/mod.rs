@@ -1,3 +1,6 @@
+use std::sync::Mutex;
+
+use once_cell::sync::Lazy;
 use simple_log::{debug, info, log::error};
 
 pub mod logger;
@@ -21,6 +24,4 @@ impl Logger {
     }
 }
 
-pub fn log() -> Logger {
-    Logger::new()
-}
+pub static LOG: Lazy<Mutex<Logger>> = Lazy::new(|| Mutex::new(Logger::new()));
