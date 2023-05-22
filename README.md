@@ -1,7 +1,7 @@
 # actix-web,sea-ormでテストできるtodoアプリのapi作成
 
 rustでwebアプリケーションを作る際の自分用雛形として作成。  
-rustのwebフレームワークはactix-webを採用。dbのマイグレーションはsea-ormを採用しています。
+rustのwebフレームワークはactix-webを採用。dbのマイグレーションはsea-ormを採用しています。  
 自動テスト実行時はsqliteデータベースを利用して実行されます。
 
 * [actix-web.rs](https://actix.rs/)
@@ -10,7 +10,7 @@ rustのwebフレームワークはactix-webを採用。dbのマイグレーシ�
 
 
 ### ローカル環境での実行方法
-※Windows11,Docker-Desktop環境で動作確認済みです。
+※Windows11,Docker-Desktop環境で動作確認済みです。  
 ※vscode拡張機能devcontainerを使用します。
 
 1. git clone https://github.com/TOnodera/actix-todo-sea-orm.git
@@ -25,11 +25,11 @@ rustのwebフレームワークはactix-webを採用。dbのマイグレーシ�
 
 ### api実行方法
 
-cd /workspace/app && cargo run
-↑でサーバが起動します。
-開発時は
-cargo watch -x run
-でwatchさせることができます。
+cd /workspace/app && cargo run  
+↑でサーバが起動します。  
+開発時は  
+cargo watch -x run  
+でwatchさせることができます。  
 
 ### Rest仕様
 * Todo新規登録 Post /todo
