@@ -2,7 +2,7 @@ use actix_web::HttpResponse;
 use chrono::{DateTime, FixedOffset};
 use serde::{Deserialize, Serialize};
 
-use crate::{domain::value::todo::Todo, logger::LOG, types::ApplicationError};
+use crate::{domain::value::todo::Todo, logger, types::ApplicationError};
 
 // Post /todo Response
 #[derive(Deserialize, Serialize)]
@@ -60,10 +60,8 @@ pub fn error_response(error: ApplicationError) -> HttpResponse {
         ApplicationError::DomainError(message) => {
             HttpResponse::BadRequest().json(ErrorMessage::new(message))
         }
-        _ => {
-            LOG.try_lock()
-                .expect("ログ書き込み時に排他の取得に失敗しました。")
-                .error("サーバーエラーが発生しました。");
+        e => {
+            logger::error(&format!("{}", e));
             return HttpResponse::InternalServerError().finish();
         }
     }

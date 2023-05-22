@@ -24,4 +24,14 @@ impl Logger {
     }
 }
 
-pub static LOG: Lazy<Mutex<Logger>> = Lazy::new(|| Mutex::new(Logger::new()));
+static LOGGER: Lazy<Mutex<Logger>> = Lazy::new(|| Mutex::new(Logger::new()));
+
+pub fn info(message: &str) {
+    LOGGER.lock().expect("ログ出力に失敗しました。").info(message);
+}
+pub fn error(message: &str) {
+    LOGGER.lock().expect("ログ出力に失敗しました。").error(message);
+}
+pub fn debug(message: &str) {
+    LOGGER.lock().expect("ログ出力に失敗しました。").debug(message);
+}
